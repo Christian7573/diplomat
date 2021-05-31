@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "./backend/backend.dart";
+import "./ui_util.dart";
 
 List<Setting<dynamic>> _all_settings = [];
 class Settings {
@@ -64,30 +65,40 @@ class _SettingsPageState extends State<SettingsPage> {
 		MediaQueryData query = MediaQuery.of(context);
 		List<_SettingsPane> raw_open_panes = _pane_data.build_panes(this.route, this);
 		const double lesser_pane_width = 500 + 15;
-		const double right_padding = 15;
-		double horizontal_estate = context.size!.width - right_padding; //BORK POTENTIAL null safety
-		double greater_pane_width = horizontal_estate - ((horizontal_estate / lesser_pane_width).floor() * lesser_pane_width);
+		const double right_padding = 30;
+		double horizontal_estate = query.size.width - right_padding; //BORK POTENTIAL null safety
+		double greater_pane_width = horizontal_estate - (((horizontal_estate / lesser_pane_width).floor() - 1) * lesser_pane_width);
+		if (greater_pane_width < lesser_pane_width) greater_pane_width = horizontal_estate;
 
 		int i = -1;
-		const int left_padding = 15;
+		const double left_padding = right_padding;
 		List<Widget> panes = raw_open_panes.map((pane) {
 			i += 1;
 			late double width;
 			if (i == raw_open_panes.length - 1) width = greater_pane_width;
 			else width = lesser_pane_width;
+			if (raw_open_panes.length == 1) width = horizontal_estate;
 			return Container(
 				width: width,
+				padding: EdgeInsets.fromLTRB(left_padding, 0, 0, 0),
 				child: pane
 			);
 		}).toList();
 
 		ListView scroll = ListView(
 			scrollDirection: Axis.horizontal,
-			padding: EdgeInsets.fromLTRB(0, 15, 15, right_padding),
+			padding: EdgeInsets.fromLTRB(0, right_padding, right_padding, right_padding),
 			reverse: true,
 			children: panes,
 		);
-		return scroll;
+
+
+		AppBar appbar = AppBar(title: Text("Settings"));
+		return Scaffold(
+			appBar: Settings.ui_appbar_bottom.value ? null : appbar,
+			bottomNavigationBar: Settings.ui_appbar_bottom.value ? make_app_bar_bottom(appbar) : null,
+			body: scroll
+		);
 	}
 
 	void change_setting<T>(Setting<T> setting, T value) {
@@ -105,8 +116,8 @@ class _SettingsPane extends StatelessWidget {
 		return ListView(
 			children: [
 				Padding(
-					padding: EdgeInsets.fromLTRB(15, 30, 15, 10),
-					child: Text(this.title)
+					padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+					child: Text(this.title, style: Theme.of(context).textTheme.headline5)
 				)
 			].cast<Widget>() + this.settings.map((dynamic setting) {
 				late Widget card;
@@ -138,7 +149,7 @@ class _BooleanCard extends StatelessWidget {
 			key: PageStorageKey(this.setting.name),
 			crossAxisAlignment: CrossAxisAlignment.center,
 			children: [
-				Text(this.setting.display_name),
+				Expanded(child: Text(this.setting.display_name)),
 				Switch(value: this.setting.value, onChanged: (bool newValue) {
 					this.state.change_setting(this.setting, newValue);
 				}),

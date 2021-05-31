@@ -6,6 +6,8 @@ import "package:path_provider/path_provider.dart";
 import "dart:async";
 import "dart:io";
 import "./backend/backend.dart";
+import "./settings.dart";
+import "./ui_util.dart";
 
 void main() async {
 	//BEGIN_BACKEND_SETUP
@@ -53,16 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
 	@override
 	Widget build(BuildContext context) {
 		Drawer drawer = Drawer(child: ThreadList(sample_threads()));
+		AppBar bar = AppBar(title: Text(widget.title), primary: false);
 		return Scaffold(
-			bottomNavigationBar: BottomAppBar(
-				// Here we take the value from the MyHomePage object that was created by
-				// the App.build method, and use it to set our appbar title.
-				child: Container(
-			height: kToolbarHeight,
-			child: AppBar(title: Text(widget.title), primary: false),
-		),
-			),
-		drawer: drawer,
+			appBar: Settings.ui_appbar_bottom.value ? null : bar,
+			bottomNavigationBar: Settings.ui_appbar_bottom.value ? make_app_bar_bottom(bar) : null,
+			drawer: drawer,
 			body: Center(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
 				),
 			),
 			floatingActionButton: FloatingActionButton(
-				onPressed: _incrementCounter,
+				//onPressed: _incrementCounter,
+				onPressed: () {
+					Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage([""])));
+				},
 				tooltip: 'Increment',
 				child: Icon(Icons.add),
 			), 
