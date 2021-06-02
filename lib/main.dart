@@ -8,6 +8,7 @@ import "dart:io";
 import "./backend/backend.dart";
 import "./settings.dart";
 import "./ui_util.dart";
+import "./thread_interface.dart";
 
 void main() async {
 	//BEGIN_BACKEND_SETUP
@@ -60,28 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
 			appBar: Settings.ui_appbar_bottom.value ? null : bar,
 			bottomNavigationBar: Settings.ui_appbar_bottom.value ? make_app_bar_bottom(bar) : null,
 			drawer: drawer,
-			body: Center(
-				child: Column(
-					mainAxisAlignment: MainAxisAlignment.center,
-					children: <Widget>[
-						Text(
-							'7573 You have pushed the button this many times:',
-						),
-						Text(
-							'$_counter',
-							style: Theme.of(context).textTheme.headline4,
-						),
-					],
-				),
-			),
-			floatingActionButton: FloatingActionButton(
+			body: ThreadInterface(sample_threads()[0]),
+			/*floatingActionButton: FloatingActionButton(
 				//onPressed: _incrementCounter,
 				onPressed: () {
 					Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage([""])));
 				},
 				tooltip: 'Increment',
 				child: Icon(Icons.add),
-			), 
+			),*/ 
 		);
 	}
 }
