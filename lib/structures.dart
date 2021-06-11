@@ -4,10 +4,16 @@ class Thread {
 	Multiaddr addr;
 	String name;
 	List<Thread> children = [];
+	List<MessageBatch> message_batches = [];
 
 	Thread(this.addr, this.name, {List<Thread>? children}) {
 		if (children != null) this.children = children;
 	}
+}
+
+class MessageBatch {
+	List<Message> messages;	
+	MessageBatch(this.messages);
 }
 
 class Message {

@@ -14,9 +14,9 @@ class Multiaddr {
 					components.add(comp);
 				} break;
 
-				default: {
 
-				} break;
+				case "dummy": { components.add(MultiaddrDummyComponent()); } break;
+				default: { throw "Unknown multiaddr component " + bits.current; } 
 			}
 		}
 		return Multiaddr(components);
@@ -31,7 +31,8 @@ class Multiaddr {
 }
 
 enum MultiaddrComponentType {
-	Thread
+	Thread,
+	Dummy
 }
 
 abstract class MultiaddrComponent {
@@ -49,4 +50,9 @@ class MultiaddrThreadComponent extends MultiaddrComponent {
 		return MultiaddrThreadComponent(bits.current);
 	}
 	@override String toString() => "/thread/$id";
+}
+
+class MultiaddrDummyComponent extends MultiaddrComponent {
+	@override String toString() => "/dummy";
+	MultiaddrComponentType get type => MultiaddrComponentType.Dummy;
 }

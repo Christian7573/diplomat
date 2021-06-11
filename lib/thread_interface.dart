@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "./structures.dart";
+import "./multiaddr.dart";
 
 class ThreadInterface extends StatelessWidget {
 	Thread thread;
@@ -10,7 +11,7 @@ class ThreadInterface extends StatelessWidget {
 		return Column(children: [
 			Expanded(child: Padding(
 				padding: EdgeInsets.all(10),
-				child: Text("Test")
+				child: _Messages(thread)
 			)),
 			Padding(padding: EdgeInsets.all(10), child: Row(children: [
 				FloatingActionButton(
@@ -36,6 +37,28 @@ class ThreadInterface extends StatelessWidget {
 	}
 }
 
+class _Messages extends StatefulWidget {
+	final Thread thread;
+	_Messages(this.thread);
+	State<_Messages> createState() => new _MessagesState();
+}
+class _MessagesState extends State<_Messages> {
+	@override Widget build(BuildContext contest) {
+		return ListView.builder(
+			itemCount: widget.thread.message_batches.fold(0, (count, batch) { return count! + batch.messages.length; }),
+			itemBuilder: (BuildContext context, int item_number) {
+				//TODO make badn't
+				int i = 0;
+				while (item_number >= widget.thread.message_batches[i].messages.length) {
+					i++;
+					item_number -= widget.thread.message_batches[i].messages.length;
+				}
+				return _MessageTile(widget.thread.message_batches[i].messages[item_number], Author(Multiaddr.parse("/dummy")!, "Dummy"));
+			}
+		);
+	}
+}
+
 class _MessageTile extends StatelessWidget {
 	final Message message;
 	final Author author;
@@ -45,6 +68,9 @@ class _MessageTile extends StatelessWidget {
 		return ListTile(
 			title: Text(this.author.name),
 			subtitle: Text(this.message.content),
+			leading: CircleAvatar(
+				backgroundColor: Color.fromARGB(255,0,200,255),
+			)
 		);
 	}
 }
