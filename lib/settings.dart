@@ -1,10 +1,16 @@
 import "package:flutter/material.dart";
 import "./backend/backend.dart";
 import "./ui_util.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 
 List<Setting<dynamic>> _all_settings = [];
 class Settings {
 	static Setting<bool> ui_appbar_bottom = Setting<bool>("ui_appbar_bottom", "Bottom Appbar", () => false, _all_settings);
+}
+class SettingsNotifier extends Cubit<bool> {
+	SettingsNotifier() : super(false);
+	notify() => emit(!state);
+	hello() { print("Hello from cubit"); }
 }
 
 class _SettingsPaneData {
@@ -93,16 +99,13 @@ class _SettingsPageState extends State<SettingsPage> {
 		);
 
 
+		BlocProvider.of<SettingsNotifier>(context, listen: true);
 		AppBar appbar = AppBar(title: Text("Settings"));
 		return Scaffold(
 			appBar: Settings.ui_appbar_bottom.value ? null : appbar,
 			bottomNavigationBar: Settings.ui_appbar_bottom.value ? make_app_bar_bottom(appbar) : null,
 			body: scroll
 		);
-	}
-
-	void change_setting<T>(Setting<T> setting, T value) {
-		setState(() { setting.value = value; });
 	}
 }
 
@@ -151,7 +154,8 @@ class _BooleanCard extends StatelessWidget {
 			children: [
 				Expanded(child: Text(this.setting.display_name)),
 				Switch(value: this.setting.value, onChanged: (bool newValue) {
-					this.state.change_setting(this.setting, newValue);
+					this.setting.value =  newValue;
+					BlocProvider.of<SettingsNotifier>(context).notify();
 				}),
 			],
 		) );

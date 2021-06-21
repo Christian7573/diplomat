@@ -9,6 +9,7 @@ import "./backend/backend.dart";
 import "./settings.dart";
 import "./ui_util.dart";
 import "./thread_interface.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 
 void main() async {
 	//BEGIN_BACKEND_SETUP
@@ -24,13 +25,16 @@ class MyApp extends StatelessWidget {
 	// This widget is the root of your application.
 	@override
 	Widget build(BuildContext context) {
-		return MaterialApp(
-			title: 'Diplomat',
-			theme: ThemeData(
-				primarySwatch: Colors.blue,
-			),
-		debugShowCheckedModeBanner: false,
-			home: MyHomePage(title: "Diplomat"),
+		return BlocProvider.value(
+			value: SettingsNotifier(),
+			child: MaterialApp(
+				title: 'Diplomat',
+				theme: ThemeData(
+					primarySwatch: Colors.blue,
+				),
+			debugShowCheckedModeBanner: false,
+				home: MyHomePage(title: "Diplomat"),
+			)
 		);
 	}
 }
@@ -57,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
 	Widget build(BuildContext context) {
 		Drawer drawer = Drawer(child: ThreadList(sample_threads()));
 		AppBar bar = AppBar(title: Text(widget.title), primary: false);
+		BlocProvider.of<SettingsNotifier>(context, listen: true).hello();
+		print(context);
 		return Scaffold(
 			appBar: Settings.ui_appbar_bottom.value ? null : bar,
 			bottomNavigationBar: Settings.ui_appbar_bottom.value ? make_app_bar_bottom(bar) : null,

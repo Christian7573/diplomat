@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "./structures.dart";
 import "./multiaddr.dart";
+import "./settings.dart";
 
 class ThreadInterface extends StatelessWidget {
 	Thread thread;
@@ -15,7 +16,9 @@ class ThreadInterface extends StatelessWidget {
 			)),
 			Padding(padding: EdgeInsets.all(10), child: Row(children: [
 				FloatingActionButton(
-					onPressed: () {},
+					onPressed: () {
+						Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage([""])));
+					},
 					child: Icon(Icons.attach_file),
 					elevation: 0,
 					mini: true,
@@ -23,6 +26,7 @@ class ThreadInterface extends StatelessWidget {
 					backgroundColor: transparent,
 					hoverColor: Color.fromARGB(0,255,0,0),
 					hoverElevation: 0,
+					heroTag: "thread_interface_attachment"
 				),
 				Expanded(child: TextField()),
 				Container(width: 10),
@@ -31,6 +35,7 @@ class ThreadInterface extends StatelessWidget {
 					onPressed: (){},
 					elevation: 0,
 					mini: true,
+					heroTag: "thread_interface_send"
 				)
 			]) )
 		]);
